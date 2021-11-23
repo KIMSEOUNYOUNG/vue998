@@ -2,10 +2,10 @@
   <div class="light">
     <Header />
     <main id="main">
-      <section id="movieCont">
+      <section id="youtubeCont">
         <div class="container">
-          <WrapTitle name1="movie" name2="reference" />
-          <div class="movie__cont">
+          <WrapTitle name1="youtube" name2="reference" />
+          <div class="youtube__cont">
             <form @submit.prevent="PopularMovies()">
               <div class="search">
                 <label for="search" class="sr-only">검색하기</label>
@@ -15,32 +15,31 @@
                   placeholder="검색하기"
                   v-model="search"
                 />
-                <button class="submit" value="search">검색</button>
+                <button type="submit" value="search">검색</button>
+              </div>
+              <div class="youtube">
+                <div v-for="movie in movies" :key="movie.id">
+                  <a
+                    :href="
+                      'https://www.themoviedb.org/movie/' +
+                      movie.id +
+                      '-' +
+                      movie.original_title +
+                      '?language=ko-KR'
+                    "
+                    target="_blink"
+                  >
+                    <img
+                      :src="
+                        `https://image.tmdb.org/t/p/w500` + movie.backdrop_path
+                      "
+                      art=""
+                    />
+                    <p class="title">{{ movie.title }}</p>
+                  </a>
+                </div>
               </div>
             </form>
-            <div class="youtube">
-              <div v-for="movie in movies" :key="movie.id">
-                <a
-                  :href="
-                    'https://www.themoviedb.org/movie/' +
-                    movie.id +
-                    '-' +
-                    movie.original_title +
-                    '?language=ko-KR'
-                  "
-                  target="_blink"
-                >
-                  <img
-                    :src="
-                      'https://www.themoviedb.org/t/p/w600_and_h900_bestv2' +
-                      movie.backdrop_path
-                    "
-                    :alt="movie.title"
-                  />
-                  <p class="title">{{ movie.title }}</p>
-                </a>
-              </div>
-            </div>
           </div>
         </div>
         <ContInfo />
@@ -69,6 +68,8 @@ export default {
   setup() {
     const search = ref("");
     const movies = ref([]);
+    const tmdbAPI = process.env.VUE_APP_TMDB_KEY;
+
     var requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -77,7 +78,7 @@ export default {
     const PopularMovies = () => {
       if (search.value != "") {
         fetch(
-          "https://api.themoviedb.org/3/movie/popular?api_key=b76068f3ec4afd86e9ad66a0b6c4877b&language=ko-KR",
+          `https://api.themoviedb.org/3/movie/popular?api_key=${tmdbAPI}&language=ko-KR`,
           requestOptions
         )
           .then((response) => response.json())
